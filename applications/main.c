@@ -15,6 +15,7 @@ void oc_main_task(void *p)
     unsigned char buf[50] = {0};
     int i;
     struct l_tm t;
+    oc_init();
     oc_printf("ML302 OpenCPU Starts\r\n");
     
     oc_printf("Boot Cause:%d\r\n",cm_sys_get_boot_cause());
@@ -47,7 +48,6 @@ void oc_main_task(void *p)
 
 void ML302_OpenCPU_Entry()
 {
-    oc_init();
     cm_test_alarm_init();
     main_task_handle=oc_task_create("main_task",oc_main_task,OC_NULL,8192,OC_TASK_PRIORITY_NORMAL);
 
