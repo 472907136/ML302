@@ -97,7 +97,7 @@
             "dwAddress": "0x60010000",
             "dwCanOmitFlag": 0,
             "filePath": "prebuilt/pacfile/8910DM_ML302.sign.img",
-            "fixedSize": "0x330000",
+            "fixedSize": "0x280000",
             "forceCheck": 0,
             "szFileID": "AP",
             "szFileName": "8910DM_ML302.sign.img",

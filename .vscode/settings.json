@@ -16,5 +16,20 @@
             "command": "extension.execute",
             "priority": 4
         }
-    ]
+    ],
+    "files.associations": {
+        "oc.h": "c",
+        "board.h": "c",
+        "oc_log.h": "c",
+        "shell.h": "c",
+        "shell_cfg.h": "c",
+        "onemo_main.h": "c",
+        "cmsis_os.h": "c",
+        "sockets.h": "c",
+        "ip_addr.h": "c",
+        "opt.h": "c",
+        "errno.h": "c",
+        "main.h": "c",
+        "demo.h": "c"
+    }
 }

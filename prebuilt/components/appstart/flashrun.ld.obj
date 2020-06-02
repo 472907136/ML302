@@ -4,7 +4,7 @@ ENTRY(Reset_Handler)
 EXTERN(Reset_Handler)
 MEMORY {
     flash(rx): ORIGIN = 0x60000000 +0x10000 +0x40,
-               LENGTH = 0x330000 -0x40
+               LENGTH = 0x280000 -0x40
     ram(rwx): ORIGIN = 0x80000000 +0xC00000,
                LENGTH = 0x400000
     sram(rwx): ORIGIN = 0x800000 +0x100,
@@ -23,7 +23,8 @@ SECTIONS {
     .ramtext : { __ramtext_start = .; *libdriver.a:drv_spi_flash.*(.text .text.* .gnu.linkonce.t.* .rdata .rodata .rodata.* .gnu.linkonce.r.*) *(.ramtext .ramtext.*) __ramtext_end = .; . = ALIGN(0x20); __ramtext_load_start = LOADADDR(.ramtext); } >ram AT>flash
     .init_array : { __init_array_start = .; KEEP(*(.init_array*)) __init_array_end = .; . = ALIGN(0x20); __init_array_load_start = LOADADDR(.init_array); } > flash
     .text : { __text_start = .; *(.text .text.* .gnu.linkonce.t.* .rdata .rodata .rodata.* .gnu.linkonce.r.*) KEEP(*(.rokeep)) __text_end = .; . = ALIGN(0x20); __text_load_start = LOADADDR(.text); } > flash
-    .sramdata : { __sramdata_start = .; *(.sramdata .sramdata.*) __sramdata_end = .; . = ALIGN(0x20); __sramdata_load_start = LOADADDR(.sramdata); } > sram AT>flash
+    .SHELL : {_shell_command_start = .; KEEP (*(shellCommand)) _shell_command_end = .; . = ALIGN(0x20); } > flash
+	.sramdata : { __sramdata_start = .; *(.sramdata .sramdata.*) __sramdata_end = .; . = ALIGN(0x20); __sramdata_load_start = LOADADDR(.sramdata); } > sram AT>flash
     .data : { __data_start = .; *(.data .data.* .gnu.linkonce.d.*) KEEP(*(.rwkeep)) __data_end = .; . = ALIGN(0x20); __data_load_start = LOADADDR(.data); } > ram AT>flash
     .srambss : { __srambss_start = .; *(.srambss .srambss.*) __srambss_end = .; . = ALIGN(0x20); __srambss_load_start = LOADADDR(.srambss); } >sram
     .bss : { __bss_start = .; *(.bss .bss.* COMMON .scommon .sbss .sbss.* .sbss2 .sbss2.* .gnu.linkonce.b.*) __bss_end = .; . = ALIGN(0x20); __bss_load_start = LOADADDR(.bss); } >ram

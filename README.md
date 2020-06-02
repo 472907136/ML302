@@ -1,4 +1,4 @@
-# ML302
+# ML302 Ocean SDK
 ML302开发板配套OPENCPU代码,代码由河北骑士智能科技有限公司维护，目前增在更新相关硬件驱动和网络相关代码。
 
 源码地址：[https://github.com/hbqs/ML302] 作者:[longmain](https://github.com/hbqs)

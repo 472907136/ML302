@@ -8,14 +8,14 @@
 
 TOP_PATH = $(shell pwd)
 include tools/config.mk
-include onemo_feature.mk
 empty:=
 space:=$(empty) 
 CC := tools/private/gcc-arm-none-eabi/bin/arm-none-eabi-gcc
 CXX := tools/private/gcc-arm-none-eabi/bin/arm-none-eabi-g++
 BINMAKER := python tools/private/elf2flash.py
 CFLAGS :=  -std=gnu11   -mcpu=cortex-a5 -mtune=generic-armv7-a -mthumb -mfpu=neon-vfpv4 -mfloat-abi=hard -mno-unaligned-access -g -Os  -ffunction-sections -fdata-sections -w
-INC :=  -I'inc\os' -I'inc\shell' -I'inc\apb' -I'inc\lwip' -Isrc -I. -Iinc  -I'inc\onemo'  -Iinc\mbedtls -Iinc\os\include -Iinc\cJSON -Iinc\os\include\sys
+INC :=  -I. 
+include lib/module.mk
 
 LDFLAGS := -w -std=c++11 -fno-exceptions -fno-rtti -fno-threadsafe-statics 
 LDFLAGS +=   prebuilt/components/appstart/app_start.c.obj prebuilt/components/appstart/app_keypad.c.obj  
@@ -27,7 +27,10 @@ LDFLAGS +=prebuilt/libfsmount.a prebuilt/libsffs.a prebuilt/libbdev.a prebuilt/l
 LDFLAGS +=prebuilt/components/cmd_engine.o
 
 
-SRC_DIRS := src src/shell
+SRC_DIRS := applications
+
+include oc/module.mk
+include applications/module.mk
 
 ifeq ($(onemo_fota_on),y)
 CFLAGS += -DONEMO_FOTA_SUPPORT
@@ -37,90 +40,13 @@ ifeq ($(onemo_gnss_on),y)
 CFLAGS += -DONEMO_GNSS_SUPPORT
 endif
 
-ifeq ($(onemo_demo_on),y)
-CFLAGS += -DONEMO_DEMO_SUPPORT
-SRC_DIRS += src/demo
-
-ifeq ($(onemo_http_on),y)
-CFLAGS += -DONEMO_HTTP_SUPPORT
-SRC_DIRS += src/demo/http/src
-INC      += -Isrc/demo/http/inc
-
-CFLAGS += -DONEMO_HTTPCLIENT_SSL_ENABLE
-CFLAGS += -DONEMO_HTTPS_SUPPORT
-SRC_DIRS += src\demo\wolfssl-3.15.3\src
-SRC_DIRS += src\demo\wolfssl-3.15.3\src\wolfcrypt\src
-INC      += -Isrc\demo\wolfssl-3.15.3\include
-endif
-
-ifeq ($(onemo_edp_on),y)
-CFLAGS += -DONEMO_EDP_SUPPORT
-SRC_DIRS += src/demo/edp/src
-INC      += -Isrc/demo/edp/inc
-endif
-
-ifeq ($(onemo_DM_on),y)
-CFLAGS += -DONEMO_DM_SUPPORT
-SRC_DIRS += src/demo/dm/ciscore
-SRC_DIRS += src/demo/dm/ciscore/dm_utils
-SRC_DIRS += src/demo/dm/ciscore/dtls
-SRC_DIRS += src/demo/dm/ciscore/er-coap-13
-SRC_DIRS += src/demo/dm/ciscore/std_object
-SRC_DIRS += src/demo/dm/adapter/win
-
-INC      += -Isrc/demo/dm/ciscore
-INC      += -Isrc/demo/dm/ciscore/dm_utils
-INC      += -Isrc/demo/dm/adapter/win
-INC      += -Isrc/demo/dm/inc
-endif
-
-ifeq ($(onemo_MQTT_on),y)
-CFLAGS += -DONEMO_MQTT_SUPPORT
-CFLAGS += -DAT_MQTTSN_SUPPORT
-SRC_DIRS += src/demo/libmqttsn/src
-SRC_DIRS += src/demo/libmqttsn/src/paho.mqtt-sn.embedded-c/client
-SRC_DIRS += src/demo/libmqttsn/src/paho.mqtt-sn.embedded-c/genccont/src
-SRC_DIRS += src/demo/libmqttsn/src/paho.mqtt-sn.embedded-c/platform/one-mo
-SRC_DIRS += src/demo/libmqttsn/src/paho.mqtt-sn.embedded-c/MQTTPacket/src
-
-INC      += -Isrc/demo/libmqttsn/include
-INC      += -Isrc/demo/libmqttsn/src/paho.mqtt-sn.embedded-c/platform
-INC      += -Isrc/demo/libmqttsn/src/paho.mqtt-sn.embedded-c/client
-INC      += -Isrc/demo/libmqttsn/src/paho.mqtt-sn.embedded-c/MQTTPacket/src
-INC      += -Isrc/demo/libmqttsn/src/paho.mqtt-sn.embedded-c/genccont/src
-endif
-
-ifeq ($(onemo_aliyun_on),y)
-CFLAGS += -DONEMO_ALIYUN_SUPPORT
-SRC_DIRS += src/demo/aliyun/src
-SRC_DIRS += src/demo/aliyun/src/certs
-SRC_DIRS += src/demo/aliyun/src/dev_sign
-SRC_DIRS += src/demo/aliyun/src/dynamic_register
-SRC_DIRS += src/demo/aliyun/src/infra
-SRC_DIRS += src/demo/aliyun/src/mqtt
-SRC_DIRS += src/demo/aliyun/src/ota
-SRC_DIRS += src/demo/aliyun/src/wrappers
-SRC_DIRS += src/demo/aliyun/src/wrappers/tls
-SRC_DIRS += src/demo/aliyun/demo
-
-INC      += -Isrc/demo/aliyun/src
-INC      += -Isrc/demo/aliyun/src/dev_sign
-INC      += -Isrc/demo/aliyun/src/dynamic_register
-INC      += -Isrc/demo/aliyun/src/infra
-INC      += -Isrc/demo/aliyun/src/mqtt
-INC      += -Isrc/demo/aliyun/src/ota
-INC      += -Isrc/demo/aliyun/src/wrappers
-INC      += -Iinc/os/include/sys
-endif
-
-endif
 
 INC +=  $(foreach dir,$(SRC_DIRS),-I$(dir)$(space) )
 OBJS = $(foreach dir,$(SRC_DIRS),$(patsubst %.c,out/%.o,$(wildcard $(dir)/*.c)))
 OBJS += $(foreach dir,$(SRC_DIRS),$(patsubst %.cpp,out/%.o,$(wildcard $(dir)/*.cpp)))
 SRC-C-DEPS = $(foreach dir,$(SRC_DIRS),$(patsubst %.c,out/%.o.d,$(wildcard $(dir)/*.c)))
 SRC-C-DEPS +=  $(foreach dir,$(SRC_DIRS),$(patsubst %.cpp,out/%.o.d,$(wildcard $(dir)/*.cpp)))
-all: check $(OBJS)
+all: check $(OBJS) 
 	@echo "linking $(HWVER) libs"
 	@$(CXX) -Wl,--no-whole-archive $(OBJS) $(LDFLAGS)   -o firmware/$(strip $(HWVER))/8910DM_ML302.elf
 	@tools/private/dtools mkuimage --name DEVEL-gfed18f29-dirty firmware/$(strip $(HWVER))/8910DM_ML302.elf firmware/$(strip $(HWVER))/8910DM_ML302.img
