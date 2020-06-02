@@ -34,11 +34,11 @@ void oc_main_task(void *p)
     cm_test_get_imsi();
     cm_test_get_iccid();
     
-    #ifdef cm_FOTA_SUPPORT   //启用OneNet FOTA不可删除
+#ifdef CM_FOTA_SUPPORT   //启用OneNet FOTA不可删除
     char *version = NULL;
     onVersion(&version);
     oc_printf("OneNet FOTA version:%s\n", version);
-    #endif
+#endif
     while(1)
     {
         oc_task_delay_ms(1000);
@@ -51,7 +51,7 @@ void ML302_OpenCPU_Entry()
     cm_test_alarm_init();
     main_task_handle=oc_task_create("main_task",oc_main_task,OC_NULL,8192,OC_TASK_PRIORITY_NORMAL);
 
-#ifdef cm_FOTA_SUPPORT   //启用OneNet FOTA不可删除
+#ifdef CM_FOTA_SUPPORT   //启用OneNet FOTA不可删除
     cm_onenet_fota_regcbex();
 #endif
 }
